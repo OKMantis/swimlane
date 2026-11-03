@@ -1,18 +1,17 @@
-import Card from './components/Card'
+import Board from './components/Board'
 
-const firstCard = {
-  id: 'demo1',
-  title: 'Learn what props are',
-  priority: 'high',
-  dueDate: '2026-01-15',
-}
+// Temporary hard-coded data. In step 6 this comes from the API instead.
+const sampleColumns = [
+  { id: 'colA', title: 'To Do', position: 0 },
+  { id: 'colB', title: 'Doing', position: 1 },
+  { id: 'colC', title: 'Done', position: 2 },
+]
 
-const secondCard = {
-  id: 'demo2',
-  title: 'Reuse the same component',
-  priority: 'low',
-  dueDate: '',
-}
+const sampleCards = [
+  { id: 'c1', columnId: 'colA', title: 'Second in To Do', priority: 'low', dueDate: '', position: 1 },
+  { id: 'c2', columnId: 'colA', title: 'First in To Do', priority: 'high', dueDate: '2026-01-15', position: 0 },
+  { id: 'c3', columnId: 'colB', title: 'Render a list with map()', priority: 'medium', dueDate: '', position: 0 },
+]
 
 export default function App() {
   return (
@@ -21,10 +20,7 @@ export default function App() {
         <h1>🏊 Swimlane</h1>
       </header>
       <main>
-        <div style={{ maxWidth: 280, display: 'grid', gap: 8 }}>
-          <Card card={firstCard} />
-          <Card card={secondCard} />
-        </div>
+        <Board columns={sampleColumns} cards={sampleCards} />
       </main>
     </div>
   )
