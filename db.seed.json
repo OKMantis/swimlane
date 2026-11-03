@@ -1,0 +1,29 @@
+{
+  "boards": [
+    {"id": "b1", "name": "Product Launch"},
+    {"id": "b2", "name": "Home Renovation"}
+  ],
+  "columns": [
+    {"id": "col1", "boardId": "b1", "title": "Backlog", "position": 0},
+    {"id": "col2", "boardId": "b1", "title": "In Progress", "position": 1},
+    {"id": "col3", "boardId": "b1", "title": "Review", "position": 2},
+    {"id": "col4", "boardId": "b1", "title": "Done", "position": 3},
+    {"id": "col5", "boardId": "b2", "title": "To Do", "position": 0},
+    {"id": "col6", "boardId": "b2", "title": "Doing", "position": 1},
+    {"id": "col7", "boardId": "b2", "title": "Done", "position": 2}
+  ],
+  "cards": [
+    {"id": "card1", "columnId": "col1", "title": "Write launch blog post", "description": "Draft, review with marketing, schedule for launch day.", "priority": "medium", "dueDate": "2026-12-01", "position": 0},
+    {"id": "card2", "columnId": "col1", "title": "Set up analytics dashboard", "description": "Track signups, activation and churn.", "priority": "low", "dueDate": "", "position": 1},
+    {"id": "card3", "columnId": "col1", "title": "Prepare press kit", "description": "Logos, screenshots, founder bios.", "priority": "medium", "dueDate": "2026-11-25", "position": 2},
+    {"id": "card4", "columnId": "col2", "title": "Build pricing page", "description": "Three tiers with a monthly/yearly toggle.", "priority": "high", "dueDate": "2026-11-20", "position": 0},
+    {"id": "card5", "columnId": "col2", "title": "Fix signup email bug", "description": "Confirmation emails land in spam on Outlook.", "priority": "high", "dueDate": "2026-10-28", "position": 1},
+    {"id": "card6", "columnId": "col3", "title": "Onboarding flow copy", "description": "Review tone of voice with the team.", "priority": "low", "dueDate": "", "position": 0},
+    {"id": "card7", "columnId": "col4", "title": "Choose launch date", "description": "Agreed on early December.", "priority": "medium", "dueDate": "", "position": 0},
+    {"id": "card8", "columnId": "col4", "title": "Register domain", "description": "", "priority": "low", "dueDate": "", "position": 1},
+    {"id": "card9", "columnId": "col5", "title": "Get quotes for new windows", "description": "At least three suppliers.", "priority": "high", "dueDate": "2026-11-30", "position": 0},
+    {"id": "card10", "columnId": "col5", "title": "Pick bathroom tiles", "description": "Light, matte, non-slip.", "priority": "medium", "dueDate": "", "position": 1},
+    {"id": "card11", "columnId": "col6", "title": "Paint the living room", "description": "Second coat still needed.", "priority": "medium", "dueDate": "2026-11-15", "position": 0},
+    {"id": "card12", "columnId": "col7", "title": "Replace kitchen tap", "description": "", "priority": "low", "dueDate": "", "position": 0}
+  ]
+}
