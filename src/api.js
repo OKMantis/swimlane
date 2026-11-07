@@ -23,4 +23,6 @@ export const api = {
     if (columnIds.length === 0) return Promise.resolve([])
     return request(`/cards?columnId:in=${columnIds.join(',')}&_sort=position`)
   },
+
+  createCard: (card) => request('/cards', { method: 'POST', body: JSON.stringify(card) }),
 }

@@ -10,6 +10,7 @@ export default function App() {
   const [cards, setCards] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [notice, setNotice] = useState(null) // errors from create/update/delete
 
   // Effect 1: load the list of boards once.
   useEffect(() => {
@@ -56,6 +57,27 @@ export default function App() {
     }
   }, [selectedBoardId]) // dependency array: re-run when this value changes
 
+  // Returns true/false so the form knows whether to clear itself.
+  async function handleAddCard(columnId, fields) {
+    const position = cards.filter((card) => card.columnId === columnId).length
+    try {
+      const newCard = await api.createCard({
+        columnId,
+        title: fields.title,
+        description: '',
+        priority: fields.priority,
+        dueDate: '',
+        position,
+      })
+      // Immutable update: build a NEW array instead of cards.push(newCard)
+      setCards((previous) => [...previous, newCard])
+      return true
+    } catch (err) {
+      setNotice(err.message)
+      return false
+    }
+  }
+
   function handleSelectBoard(boardId) {
     setLoading(true)
     setSelectedBoardId(boardId)
@@ -70,13 +92,21 @@ export default function App() {
         )}
       </header>
       <main>
+        {notice && (
+          <div className="notice">
+            {notice}
+            <button type="button" onClick={() => setNotice(null)} aria-label="Dismiss">
+              ×
+            </button>
+          </div>
+        )}
         {loading && <p className="status">Loading board…</p>}
         {error && (
           <p className="status status-error">
             Could not load the board: {error}. Is json-server running? (npm run api)
           </p>
         )}
-        {!loading && !error && <Board columns={columns} cards={cards} />}
+        {!loading && !error && <Board columns={columns} cards={cards} onAddCard={handleAddCard} />}
       </main>
     </div>
   )

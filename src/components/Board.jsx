@@ -1,6 +1,6 @@
-import Column from "./Column";
+import Column from './Column'
 
-export default function Board({ columns, cards }) {
+export default function Board({ columns, cards, onAddCard }) {
   return (
     <div className="board">
       {columns.map((column) => (
@@ -8,6 +8,7 @@ export default function Board({ columns, cards }) {
           key={column.id}
           column={column}
           cards={cards.filter((card) => card.columnId === column.id)}
+          onAddCard={onAddCard}
         />
       ))}
     </div>
