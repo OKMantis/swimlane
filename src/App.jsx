@@ -1,26 +1,47 @@
 import { useEffect, useState } from 'react'
 import { api } from './api'
 import Board from './components/Board'
+import BoardPicker from './components/BoardPicker'
 
 export default function App() {
+  const [boards, setBoards] = useState([])
+  const [selectedBoardId, setSelectedBoardId] = useState(null)
   const [columns, setColumns] = useState([])
   const [cards, setCards] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
+  // Effect 1: load the list of boards once.
   useEffect(() => {
-    let ignore = false // guards against setting state after this effect was cleaned up
+    api
+      .getBoards()
+      .then((data) => {
+        setBoards(data)
+        if (data.length > 0) {
+          setSelectedBoardId(data[0].id)
+        } else {
+          setLoading(false)
+        }
+      })
+      .catch((err) => {
+        setError(err.message)
+        setLoading(false)
+      })
+  }, [])
 
-    async function loadFirstBoard() {
+  // Effect 2: (re)load columns + cards every time selectedBoardId changes.
+  useEffect(() => {
+    if (!selectedBoardId) return
+    let ignore = false
+
+    async function loadBoard() {
       try {
-        const boards = await api.getBoards()
-        if (boards.length === 0) return
-        const boardColumns = await api.getColumns(boards[0].id)
+        const boardColumns = await api.getColumns(selectedBoardId)
         const boardCards = await api.getCards(boardColumns.map((column) => column.id))
-
         if (!ignore) {
           setColumns(boardColumns)
           setCards(boardCards)
+          setError(null)
         }
       } catch (err) {
         if (!ignore) setError(err.message)
@@ -29,16 +50,24 @@ export default function App() {
       }
     }
 
-    loadFirstBoard()
+    loadBoard()
     return () => {
       ignore = true
     }
-  }, []) // empty array = run once, after the first render
+  }, [selectedBoardId]) // dependency array: re-run when this value changes
+
+  function handleSelectBoard(boardId) {
+    setLoading(true)
+    setSelectedBoardId(boardId)
+  }
 
   return (
     <div className="app">
       <header className="app-header">
         <h1>🏊 Swimlane</h1>
+        {boards.length > 0 && (
+          <BoardPicker boards={boards} selectedBoardId={selectedBoardId} onSelect={handleSelectBoard} />
+        )}
       </header>
       <main>
         {loading && <p className="status">Loading board…</p>}
