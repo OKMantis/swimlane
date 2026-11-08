@@ -1,4 +1,4 @@
-import PriorityBadge from "./PriorityBadge";
+import PriorityBadge from './PriorityBadge'
 
 // A plain JavaScript helper. Components are just functions, so helpers can live next to them.
 function isOverdue(dueDate) {
@@ -7,9 +7,9 @@ function isOverdue(dueDate) {
   return dueDate < today // ISO date strings compare correctly as text
 }
 
-export default function Card({ card }) {
+export default function Card({ card, onOpen }) {
   return (
-    <article className="card">
+    <article className="card" onClick={() => onOpen(card.id)}>
       <h3 className="card-title">{card.title}</h3>
       <div className="card-meta">
         <PriorityBadge priority={card.priority} />

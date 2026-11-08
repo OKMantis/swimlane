@@ -1,7 +1,7 @@
 import Card from './Card'
 import NewCardForm from './NewCardForm'
 
-export default function Column({ column, cards, onAddCard }) {
+export default function Column({ column, cards, onAddCard, onOpenCard }) {
   // Never mutate props: copy the array before sorting it.
   const sortedCards = [...cards].sort((a, b) => a.position - b.position)
 
@@ -14,7 +14,7 @@ export default function Column({ column, cards, onAddCard }) {
 
       <div className="card-list">
         {sortedCards.map((card) => (
-          <Card key={card.id} card={card} />
+          <Card key={card.id} card={card} onOpen={onOpenCard} />
         ))}
         {sortedCards.length === 0 && <p className="empty">No cards</p>}
       </div>

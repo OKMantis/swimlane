@@ -25,4 +25,9 @@ export const api = {
   },
 
   createCard: (card) => request('/cards', { method: 'POST', body: JSON.stringify(card) }),
+
+  updateCard: (id, changes) =>
+    request(`/cards/${id}`, { method: 'PATCH', body: JSON.stringify(changes) }),
+
+  deleteCard: (id) => request(`/cards/${id}`, { method: 'DELETE' }),
 }

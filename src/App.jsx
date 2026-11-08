@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { api } from './api'
 import Board from './components/Board'
 import BoardPicker from './components/BoardPicker'
+import CardModal from './components/CardModal'
 
 export default function App() {
   const [boards, setBoards] = useState([])
@@ -11,6 +12,11 @@ export default function App() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [notice, setNotice] = useState(null) // errors from create/update/delete
+  const [selectedCardId, setSelectedCardId] = useState(null)
+
+  // Derived value: store only the id, look the card up on every render.
+  // That way the modal always shows the latest version of the card.
+  const selectedCard = cards.find((card) => card.id === selectedCardId)
 
   // Effect 1: load the list of boards once.
   useEffect(() => {
@@ -78,6 +84,34 @@ export default function App() {
     }
   }
 
+  async function handleUpdateCard(cardId, changes) {
+    const current = cards.find((card) => card.id === cardId)
+    const patch = { ...changes }
+    // Moving to another column? Put the card at the bottom of that column.
+    if (changes.columnId && changes.columnId !== current.columnId) {
+      patch.position = cards.filter((card) => card.columnId === changes.columnId).length
+    }
+    try {
+      const saved = await api.updateCard(cardId, patch)
+      setCards((previous) => previous.map((card) => (card.id === cardId ? saved : card)))
+      return true
+    } catch (err) {
+      setNotice(err.message)
+      return false
+    }
+  }
+
+  async function handleDeleteCard(cardId) {
+    try {
+      await api.deleteCard(cardId)
+      setCards((previous) => previous.filter((card) => card.id !== cardId))
+      return true
+    } catch (err) {
+      setNotice(err.message)
+      return false
+    }
+  }
+
   function handleSelectBoard(boardId) {
     setLoading(true)
     setSelectedBoardId(boardId)
@@ -106,7 +140,24 @@ export default function App() {
             Could not load the board: {error}. Is json-server running? (npm run api)
           </p>
         )}
-        {!loading && !error && <Board columns={columns} cards={cards} onAddCard={handleAddCard} />}
+        {!loading && !error && (
+          <Board
+            columns={columns}
+            cards={cards}
+            onAddCard={handleAddCard}
+            onOpenCard={setSelectedCardId}
+          />
+        )}
+        {selectedCard && (
+          <CardModal
+            key={selectedCard.id}
+            card={selectedCard}
+            columns={columns}
+            onSave={handleUpdateCard}
+            onDelete={handleDeleteCard}
+            onClose={() => setSelectedCardId(null)}
+          />
+        )}
       </main>
     </div>
   )
