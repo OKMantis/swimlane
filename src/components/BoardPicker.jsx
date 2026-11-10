@@ -4,7 +4,7 @@ export default function BoardPicker({ boards, selectedBoardId, onSelect} ) {
       Board
       <select value={selectedBoardId ?? ''} onChange={(event) => onSelect(event.target.value)}>
         {boards.map((board) => (
-          <option key="board.id" value={board.id}>
+          <option key={board.id} value={board.id}>
             {board.name}
           </option>
         ))}

@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useReducer, useState } from 'react'
 import { api } from './api'
+import { boardReducer, initialBoardState } from './boardReducer'
 import Board from './components/Board'
 import BoardPicker from './components/BoardPicker'
 import CardModal from './components/CardModal'
@@ -7,15 +8,15 @@ import CardModal from './components/CardModal'
 export default function App() {
   const [boards, setBoards] = useState([])
   const [selectedBoardId, setSelectedBoardId] = useState(null)
-  const [columns, setColumns] = useState([])
-  const [cards, setCards] = useState([])
+  // columns + cards now live in ONE reducer instead of two useState calls
+  const [state, dispatch] = useReducer(boardReducer, initialBoardState)
+  const { columns, cards } = state
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [notice, setNotice] = useState(null) // errors from create/update/delete
   const [selectedCardId, setSelectedCardId] = useState(null)
 
   // Derived value: store only the id, look the card up on every render.
-  // That way the modal always shows the latest version of the card.
   const selectedCard = cards.find((card) => card.id === selectedCardId)
 
   // Effect 1: load the list of boards once.
@@ -46,8 +47,7 @@ export default function App() {
         const boardColumns = await api.getColumns(selectedBoardId)
         const boardCards = await api.getCards(boardColumns.map((column) => column.id))
         if (!ignore) {
-          setColumns(boardColumns)
-          setCards(boardCards)
+          dispatch({ type: 'boardLoaded', columns: boardColumns, cards: boardCards })
           setError(null)
         }
       } catch (err) {
@@ -61,9 +61,8 @@ export default function App() {
     return () => {
       ignore = true
     }
-  }, [selectedBoardId]) // dependency array: re-run when this value changes
+  }, [selectedBoardId])
 
-  // Returns true/false so the form knows whether to clear itself.
   async function handleAddCard(columnId, fields) {
     const position = cards.filter((card) => card.columnId === columnId).length
     try {
@@ -75,8 +74,7 @@ export default function App() {
         dueDate: '',
         position,
       })
-      // Immutable update: build a NEW array instead of cards.push(newCard)
-      setCards((previous) => [...previous, newCard])
+      dispatch({ type: 'cardAdded', card: newCard })
       return true
     } catch (err) {
       setNotice(err.message)
@@ -87,13 +85,12 @@ export default function App() {
   async function handleUpdateCard(cardId, changes) {
     const current = cards.find((card) => card.id === cardId)
     const patch = { ...changes }
-    // Moving to another column? Put the card at the bottom of that column.
     if (changes.columnId && changes.columnId !== current.columnId) {
       patch.position = cards.filter((card) => card.columnId === changes.columnId).length
     }
     try {
       const saved = await api.updateCard(cardId, patch)
-      setCards((previous) => previous.map((card) => (card.id === cardId ? saved : card)))
+      dispatch({ type: 'cardUpdated', card: saved })
       return true
     } catch (err) {
       setNotice(err.message)
@@ -104,7 +101,7 @@ export default function App() {
   async function handleDeleteCard(cardId) {
     try {
       await api.deleteCard(cardId)
-      setCards((previous) => previous.filter((card) => card.id !== cardId))
+      dispatch({ type: 'cardRemoved', cardId })
       return true
     } catch (err) {
       setNotice(err.message)
