@@ -1,6 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react'
+import { useBoard } from '../context/boardContext'
 
-export default function CardModal({ card, columns, onSave, onDelete, onClose}) {
+export default function CardModal({ card, onClose }) {
+  const { columns, updateCard, deleteCard } = useBoard()
+
   // One state object for the whole form. It starts as a COPY of the card,
   // so typing doesn't change the real card until you press Save.
   const [form, setForm] = useState({
@@ -24,21 +27,21 @@ export default function CardModal({ card, columns, onSave, onDelete, onClose}) {
   // One handler for every field, thanks to the input's name attribute.
   function handleChange(event) {
     const { name, value } = event.target
-    setForm((previous) => ({...previous, [name]: value }))
+    setForm((previous) => ({ ...previous, [name]: value }))
   }
 
   async function handleSubmit(event) {
     event.preventDefault()
     if (form.title.trim() === '') return
     setSaving(true)
-    const ok = await onSave(card.id, { ...form, title: form.title.trim() })
+    const ok = await updateCard(card.id, { ...form, title: form.title.trim() })
     setSaving(false)
     if (ok) onClose()
   }
 
   async function handleDelete() {
     if (!window.confirm(`Delete "${card.title}"?`)) return
-    const ok = await onDelete(card.id)
+    const ok = await deleteCard(card.id)
     if (ok) onClose()
   }
 
