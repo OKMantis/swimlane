@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useBoard } from '../context/boardContext'
 import CardModal from './CardModal'
 import Column from './Column'
+import FilterBar from './FilterBar'
 
 export default function Board() {
   const { columns, cards, loading, error, notice, dismissNotice } = useBoard()
@@ -28,6 +29,8 @@ export default function Board() {
           </button>
         </div>
       )}
+
+      <FilterBar />
 
       <div className="board">
         {columns.map((column) => (

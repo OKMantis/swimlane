@@ -9,6 +9,7 @@ export function BoardProvider({ boardId, children }) {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [notice, setNotice] = useState(null)
+  const [filters, setFilters] = useState({ query: '', priority: 'all' })
 
   useEffect(() => {
     let ignore = false
@@ -84,6 +85,8 @@ export function BoardProvider({ boardId, children }) {
     error,
     notice,
     dismissNotice: () => setNotice(null),
+    filters,
+    setFilters,
     addCard,
     updateCard,
     deleteCard,
